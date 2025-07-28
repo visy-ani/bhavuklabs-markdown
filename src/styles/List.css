@@ -1,0 +1,46 @@
+.ul {
+    list-style: outside;
+    padding-left: 12px;
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    padding-inline-start: 1.625em;
+    color: #ededed;
+}
+
+.ol {
+    padding-left: 1.625em;
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    color: #ededed;
+}
+
+.li,
+.liUl {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    position: relative;
+    line-height: 1.6;
+}
+
+.liHeading {
+    color: #52a8ff;
+    font-weight: 600;
+    margin-bottom: 0.25em;
+}
+
+.liSeparator {
+    color: #666666;
+    margin: 0 0.5em;
+}
+
+.liContent {
+    color: #ededed;
+    margin-left: 0;
+    line-height: 1.6;
+}
+
+.flexWrap {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}

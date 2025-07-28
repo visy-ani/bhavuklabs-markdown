@@ -1,0 +1,8 @@
+.articleContent {
+    max-width: none;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.noContent {
+    color: #ededed;
+}

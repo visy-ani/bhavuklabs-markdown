@@ -1,0 +1,32 @@
+.h1 {
+    overflow-wrap: break-word;
+    font-weight: 600;
+    color: #ededed;
+    scroll-margin-top: 51px;
+    margin-top: 0;
+    font-size: 2.5rem;
+    margin-bottom: 0.8888889em;
+    line-height: 1.1111111;
+}
+
+.h2 {
+    font-weight: 600;
+    scroll-margin-top: 51px;
+    color: #ededed;
+    font-size: 1.5em;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    line-height: 1.3333333;
+    border-top: 2px solid #1f1f1f;
+    padding-top: 2.5rem;
+}
+
+.h3 {
+    font-weight: 600;
+    scroll-margin-top: 51px;
+    color: #ededed;
+    font-size: 1.25em;
+    margin-top: 1.5em;
+    margin-bottom: 0.75em;
+    line-height: 1.4;
+}
