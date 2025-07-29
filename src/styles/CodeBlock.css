@@ -1,48 +1,145 @@
+:root {
+    --cb-bg: #ffffff;
+    --cb-header-bg: #f6f8fa;
+    --cb-header-border: #eaecef;
+    --cb-border: #d1d5da;
+    --cb-filename: #24292e;
+    --cb-copy: #24292e;
+    --cb-pre-color: #24292e;
+    --cb-line-number: #6e7781;
+    --cb-line-bg: transparent;
+}
+
+[data-theme="dark"] {
+    --cb-bg: #0a0a0a;
+    --cb-header-bg: #000;
+    --cb-header-border: #2e2e2e;
+    --cb-border: #2e2e2e;
+    --cb-filename: #a1a1a1;
+    --cb-copy: #a1a1a1;
+    --cb-pre-color: #ededed;
+    --cb-line-number: #707070;
+    --cb-line-bg: transparent;
+}
+
 .codeBlock {
     position: relative;
     margin: 16px 0;
-    border-radius: 6px;
+    border-radius: 16px;
     overflow: hidden;
-    border: 1px solid #2e2e2e;
+    background: var(--cb-bg);
+    border: 1px solid var(--cb-border);
+    outline: none;
+    padding: 4px;
 }
 
 .codeBlockHeader {
     padding: 0 12px 0 16px;
-    border-radius: 6px 6px 0 0;
-    border-bottom: 1px solid #2e2e2e;
+    border-radius: 16px 16px 0 0;
     display: flex;
     height: 48px;
     align-items: center;
-    background: #000;
-    border: 1px solid #2e2e2e;
+    user-select: none;
 }
 
 .codeBlockFilename {
-    color: #a1a1a1;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    color: var(--cb-filename);
     font-size: 13px;
     min-width: 0;
     margin: 0 auto 0 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .codeBlockCopy {
+    position: relative;
     display: flex;
     gap: 4px;
-    color: #a1a1a1;
+    color: var(--cb-copy);
     font-size: 13px;
+    background: none;
+    border: none;
     cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 4px;
+    transition: background 0.2s;
+    align-items: center;
+}
+
+.codeBlockCopy:active,
+.codeBlockCopy:focus {
+    outline: none;
+}
+
+.tooltip {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tooltipText {
+    visibility: hidden;
+    width: max-content;
+    background-color: var(--cb-copy);
+    color: var(--cb-bg);
+    text-align: center;
+    border-radius: 4px;
+    padding: 4px 8px;
+    position: absolute;
+    z-index: 999;
+    bottom: auto;
+    top: 150%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 12px;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.codeBlockCopy:hover .tooltipText,
+.codeBlockCopy:focus .tooltipText {
+    visibility: visible;
+    opacity: 1;
 }
 
 .codeBlockPre {
-    border-radius: 0 0 6px 6px;
-    background: #0a0a0a;
+    border-radius: 12px;
+    background: var(--cb-header-bg);
     padding: 20px;
     margin: 0;
     overflow-x: auto;
-    color: #ededed;
+    color: var(--cb-pre-color);
     font-family: Monaco, Menlo, "Ubuntu Mono", monospace;
     font-size: 14px;
     line-height: 1.5;
+}
+
+.codeBlockCode {
+    display: block;
+    width: 100%;
+}
+
+.codeBlockLine {
+    display: flex;
+    align-items: flex-start;
+}
+
+.lineNumber {
+    user-select: none;
+    min-width: 2ch;
+    text-align: right;
+    color: var(--cb-line-number);
+    margin-right: 12px;
+    opacity: 0.7;
+    font-size: 13px;
+}
+
+.lineContent {
+    flex: 1;
+    background: var(--cb-line-bg);
+    word-break: break-all;
 }
