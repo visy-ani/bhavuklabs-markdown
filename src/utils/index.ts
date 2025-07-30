@@ -41,9 +41,16 @@ export const slugify = (text: string): string => {
     .replace(/-+$/, "");
 };
 
-export const deslugify = (slug: string): string => {
-  return slug.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
-};
+export function defaultSlugify(text: string) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-");
+}
+
+export const camelCaseToKebab = (str: string) =>
+  str.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
 
 export const extractCourseId = (): string | null => {
   const location = window.location; // fallback if no react hook usage

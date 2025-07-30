@@ -1,32 +1,37 @@
-.h1 {
-    overflow-wrap: break-word;
-    font-weight: 600;
-    color: #ededed;
-    scroll-margin-top: 51px;
-    margin-top: 0;
-    font-size: 2.5rem;
-    margin-bottom: 0.8888889em;
-    line-height: 1.1111111;
+:root {
+    --heading-color-light: #000;
+    --heading-color-dark: #fff;
+    --heading-font-weight: 700;
+    --heading-margin-top: 1.4em;
+    --heading-margin-bottom: 0.7em;
+    --heading-font-size-h1: 2.5rem;
+    --heading-font-size-h2: 2rem;
+    --heading-font-size-h3: 1.5rem;
+    --heading-font-size-h4: 1.2rem;
+    --heading-font-size-h5: 1rem;
+    --heading-font-size-h6: 0.86rem;
+    --heading-scroll-margin-top: 4em;
+
+    --anchor-color-light: #555;
+    --anchor-color-dark: #aaa;
+    --anchor-margin-left: 0.5em;
+    --anchor-font-size: 0.85em;
 }
 
-.h2 {
-    font-weight: 600;
-    scroll-margin-top: 51px;
-    color: #ededed;
-    font-size: 1.5em;
-    margin-top: 2em;
-    margin-bottom: 1em;
-    line-height: 1.3333333;
-    border-top: 2px solid #1f1f1f;
-    padding-top: 2.5rem;
+.heading-anchor {
+    text-decoration: none;
+    vertical-align: middle;
+    opacity: 0;
+    transition: opacity 0.2s, color 0.2s;
+    visibility: hidden;
 }
 
-.h3 {
-    font-weight: 600;
-    scroll-margin-top: 51px;
-    color: #ededed;
-    font-size: 1.25em;
-    margin-top: 1.5em;
-    margin-bottom: 0.75em;
-    line-height: 1.4;
+h1:hover .heading-anchor,
+h2:hover .heading-anchor,
+h3:hover .heading-anchor,
+h4:hover .heading-anchor,
+h5:hover .heading-anchor,
+h6:hover .heading-anchor {
+    opacity: 1;
+    visibility: visible;
 }

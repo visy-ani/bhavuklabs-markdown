@@ -1,7 +1,7 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import type { ReactNode, CSSProperties } from "react";
 import { Highlight } from "prism-react-renderer";
-import type { Language } from "prism-react-renderer";
+import type { Language, Token } from "prism-react-renderer";
 import { Copy, Check, Sparkles } from "lucide-react";
 import "../styles/CodeBlock.css";
 
@@ -118,8 +118,8 @@ export const CodeBlockComponent = ({
               empty?: boolean;
             }>
           >;
-          getLineProps: (input: { line: any; key: number }) => any;
-          getTokenProps: (input: { token: any; key: number }) => any;
+          getLineProps: (input: { line: Token[]; key: number }) => React.HTMLAttributes<HTMLSpanElement>;
+          getTokenProps: (input: { token: Token; key: number }) => React.HTMLAttributes<HTMLSpanElement>;
         }) => (
           <pre className={`${className} codeBlockPre`} style={style}>
             <code className="codeBlockCode">
