@@ -1,26 +1,11 @@
 import React, { useState } from "react";
-import type { ReactNode, CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import { Highlight } from "prism-react-renderer";
-import type { Language, Token } from "prism-react-renderer";
+import type { Token } from "prism-react-renderer";
 import { Copy, Check, Sparkles } from "lucide-react";
+import type { CodeBlockProps } from "../types";
 import "../styles/CodeBlock.css";
 
-interface CustomTheme {
-  [key: string]: string;
-}
-
-interface CodeBlockProps {
-  filename: string;
-  code: string;
-  language?: Language;
-  theme?: "light" | "dark";
-  showLineNumbers?: boolean;
-  showAskAIButton?: boolean;
-  askAIIcon?: ReactNode;
-  askAITooltipText?: string;
-  customTheme?: CustomTheme;
-  onAskAI?: (payload: { filename: string; code: string }) => void;
-}
 
 export const CodeBlockComponent = ({
   filename,
@@ -42,7 +27,8 @@ export const CodeBlockComponent = ({
       setCopied(true);
       setTimeout(() => setCopied(false), 1200);
     } catch {
-      // fail silently or add error handling here
+      console.error("Failed to copy code to clipboard");
+      setCopied(false);
     }
   };
 

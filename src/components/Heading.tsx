@@ -1,15 +1,6 @@
 import React from "react";
 import { defaultSlugify, camelCaseToKebab } from "../utils";
-
-export interface HeadingsProps
-  extends React.HTMLAttributes<HTMLHeadingElement> {
-  level?: 1 | 2 | 3 | 4 | 5 | 6;
-  content: string;
-  theme?: "light" | "dark";
-  customLink?: (opts: { slug: string; content: string }) => React.ReactNode;
-  customStyles?: Record<string, string>;
-  slug?: string;
-}
+import type { HeadingsProps } from "../types";
 
 const getColorValue = (
   customStyles: Record<string, string>,
