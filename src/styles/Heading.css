@@ -1,4 +1,5 @@
 :root {
+    /* Headings */
     --heading-color-light: #000;
     --heading-color-dark: #fff;
     --heading-font-weight: 700;
@@ -12,6 +13,7 @@
     --heading-font-size-h6: 0.86rem;
     --heading-scroll-margin-top: 4em;
 
+    /* Anchor icon */
     --anchor-color-light: #555;
     --anchor-color-dark: #aaa;
     --anchor-margin-left: 0.5em;
@@ -24,6 +26,9 @@
     opacity: 0;
     transition: opacity 0.2s, color 0.2s;
     visibility: hidden;
+    margin-left: var(--anchor-margin-left, 0.5em);
+    color: var(--anchor-color-light, #555);
+    font-size: var(--anchor-font-size, 0.85em);
 }
 
 h1:hover .heading-anchor,
@@ -34,4 +39,9 @@ h5:hover .heading-anchor,
 h6:hover .heading-anchor {
     opacity: 1;
     visibility: visible;
+}
+
+/* Optional: dark-theme override */
+[data-theme="dark"] .heading-anchor {
+    color: var(--anchor-color-dark, #aaa);
 }

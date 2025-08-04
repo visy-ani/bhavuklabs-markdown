@@ -1,6 +1,7 @@
 import React from "react";
-import { defaultSlugify, camelCaseToKebab } from "../utils";
+import { slugify, camelCaseToKebab } from "../utils";
 import type { HeadingsProps } from "../types";
+import "../styles/Heading.css"; 
 
 const getColorValue = (
   customStyles: Record<string, string>,
@@ -36,7 +37,7 @@ export const Headings: React.FC<HeadingsProps> = ({
   ...rest
 }) => {
   const Tag = `h${level}` as const;
-  const headingSlug = slug ?? defaultSlugify(content);
+  const headingSlug = slug ?? slugify(content);
 
   const cssVariables = Object.entries(customStyles).reduce<
     Record<string, string>
@@ -63,50 +64,11 @@ export const Headings: React.FC<HeadingsProps> = ({
     ...cssVariables,
   };
 
-  const anchorStyle: React.CSSProperties = {
-    marginLeft: "var(--anchor-margin-left, 0.5em)",
-    color: getColorValue(
-      customStyles,
-      "--custom-anchor-color",
-      "--anchor-color",
-      theme === "light" ? "#555" : "#aaa",
-      theme
-    ),
-    fontSize: "var(--anchor-font-size, 0.85em)",
-    textDecoration: "none",
-    verticalAlign: "middle",
-    opacity: 0,
-    transition: "opacity 0.2s, color 0.2s",
-    visibility: "hidden",
-  };
-
-  const showAnchor = (e: React.MouseEvent<HTMLHeadingElement>) => {
-    const anchor = e.currentTarget.querySelector(
-      "a.heading-anchor"
-    ) as HTMLElement | null;
-    if (anchor) {
-      anchor.style.opacity = "1";
-      anchor.style.visibility = "visible";
-    }
-  };
-
-  const hideAnchor = (e: React.MouseEvent<HTMLHeadingElement>) => {
-    const anchor = e.currentTarget.querySelector(
-      "a.heading-anchor"
-    ) as HTMLElement | null;
-    if (anchor) {
-      anchor.style.opacity = "0";
-      anchor.style.visibility = "hidden";
-    }
-  };
-
   return React.createElement(
     Tag,
     {
       id: headingSlug,
       style: baseStyle,
-      onMouseEnter: showAnchor,
-      onMouseLeave: hideAnchor,
       ...rest,
     },
     <>
@@ -117,11 +79,25 @@ export const Headings: React.FC<HeadingsProps> = ({
         ) : (
           <a
             href={`#${headingSlug}`}
-            aria-label={`Link to this heading`}
+            aria-label="Link to this heading"
             className="heading-anchor"
-            style={anchorStyle}
           >
-            🔗
+            {/* Clean Modern Link Icon */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="1em"
+              height="1em"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            </svg>
           </a>
         ))}
     </>

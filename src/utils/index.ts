@@ -31,23 +31,15 @@ export const processInlineMarkdown = (text: string): string => {
     .replace(/`(.+?)`/g, "<code>$1</code>");
 };
 
-export const slugify = (text: string): string => {
-  return text
+export const slugify = (text: string): string =>
+  text
     .toLowerCase()
+    .trim()
     .replace(/\s+/g, "-")
     .replace(/[^\w-]+/g, "")
     .replace(/--+/g, "-")
     .replace(/^-+/, "")
     .replace(/-+$/, "");
-};
-
-export function defaultSlugify(text: string) {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-");
-}
 
 export const camelCaseToKebab = (str: string) =>
   str.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);

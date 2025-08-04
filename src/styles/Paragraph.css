@@ -1,6 +1,19 @@
-.p {
+:root {
+    --paragraph-color-light: #222;
+    --paragraph-color-dark: #ddd;
+    --paragraph-margin-bottom: 1.25em;
+    --paragraph-line-height: 1.6;
+    --paragraph-font-size: 1rem;
+}
+
+.paragraph {
     margin: 0;
-    margin-bottom: 1.25em;
-    color: #ededed;
-    line-height: 1.6;
+    margin-bottom: var(--paragraph-margin-bottom);
+    line-height: var(--paragraph-line-height);
+    font-size: var(--paragraph-font-size);
+    color: var(--custom-paragraph-color, var(--paragraph-color-light));
+}
+
+.paragraph[data-theme="dark"] {
+    color: var(--custom-paragraph-color, var(--paragraph-color-dark));
 }
