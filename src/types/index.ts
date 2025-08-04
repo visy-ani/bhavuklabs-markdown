@@ -85,3 +85,26 @@ export interface HeadingsProps
   customStyles?: Record<string, string>;
   slug?: string;
 }
+
+// List component
+export interface ListTheme {
+  "--list-text-color"?: string;
+  "--list-heading-color"?: string;
+  "--list-separator-color"?: string;
+  "--list-margin-top"?: string;
+  "--list-margin-bottom"?: string;
+  "--list-padding-left"?: string;
+  "--list-item-margin"?: string;
+  "--list-line-height"?: string;
+  "--list-heading-font-weight"?: string;
+  "--list-separator-margin"?: string;
+}
+
+export interface ListItemComponentProps {
+  item: ListItem;
+  isOrdered: boolean;
+  itemClassName?: string;
+  headingClassName?: string;
+  contentClassName?: string;
+  separatorClassName?: string;
+}

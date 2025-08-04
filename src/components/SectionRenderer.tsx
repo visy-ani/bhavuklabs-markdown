@@ -1,6 +1,6 @@
 import type { ContentBlock } from "../types";
 import { Headings } from "./Heading";
-import { UnorderedListComponent, OrderedListComponent } from "./List";
+import { OrderedList, UnorderedList } from "./List";
 import { CodeBlockComponent } from "./CodeBlock";
 import { Paragraph } from "./Paragraph";
 
@@ -35,9 +35,55 @@ export const SectionRenderer = ({ section }: SectionRendererProps) => {
         />
       );
     case "ul":
-      return <UnorderedListComponent items={section.items ?? []} />;
+      return (
+        <UnorderedList
+          items={section.items ?? []}
+          theme={"dark"}
+          customTheme={{
+            "--list-text-color": "#f7fafc",
+            "--list-heading-color": "#63b3ed",
+            "--list-separator-color": "#718096",
+            "--list-margin-top": "1.5em",
+            "--list-margin-bottom": "1.5em",
+            "--list-padding-left": "2rem",
+            "--list-item-margin": "0.75em",
+            "--list-line-height": "1.7",
+            "--list-heading-font-weight": "600",
+            "--list-separator-margin": "0 0.75em",
+          }}
+          className={"custom-ul-list"}
+          itemClassName={"custom-ul-item"}
+          headingClassName={"custom-ul-heading"}
+          contentClassName={"custom-ul-content"}
+          separatorClassName={"custom-ul-separator"}
+        />
+      );
+
     case "ol":
-      return <OrderedListComponent items={section.items ?? []} />;
+      return (
+        <OrderedList
+          items={section.items ?? []}
+          theme={"dark"}
+          customTheme={{
+            "--list-text-color": "#fffff",
+            "--list-heading-color": "#3182ce",
+            "--list-separator-color": "#4a5568",
+            "--list-margin-top": "1.25em",
+            "--list-margin-bottom": "1.25em",
+            "--list-padding-left": "1.875em",
+            "--list-item-margin": "0.625em",
+            "--list-line-height": "1.6",
+            "--list-heading-font-weight": "700",
+            "--list-separator-margin": "0 0.5em",
+          }}
+          className={"custom-ol-list"}
+          itemClassName={"custom-ol-item"}
+          headingClassName={"custom-ol-heading"}
+          contentClassName={"custom-ol-content"}
+          separatorClassName={"custom-ol-separator"}
+        />
+      );
+
     case "codeBlock":
       return (
         <CodeBlockComponent

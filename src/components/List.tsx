@@ -1,35 +1,50 @@
-import type { ListItem } from "../types";
+import React from "react";
 import "../styles/List.css";
+import type { ListItem, ListTheme, ListItemComponentProps } from "../types";
 
-interface ListItemComponentProps {
-  item: ListItem;
-  isOrdered?: boolean;
+export interface ListProps {
+  items: ListItem[];
+  ordered?: boolean;
+  theme?: "light" | "dark";
+  customTheme?: ListTheme;
+  className?: string;
+  itemClassName?: string;
+  headingClassName?: string;
+  contentClassName?: string;
+  separatorClassName?: string;
 }
 
-const ListItemComponent = ({
+const ListItemComponent: React.FC<ListItemComponentProps> = ({
   item,
-  isOrdered = false,
-}: ListItemComponentProps) => {
-  const itemClassName = isOrdered ? "li" : "liUl";
+  isOrdered,
+  itemClassName,
+  headingClassName,
+  contentClassName,
+  separatorClassName,
+}) => {
+  const itemClass = `${isOrdered ? "li-ordered" : "li-unordered"} ${
+    itemClassName || ""
+  }`.trim();
 
   if (typeof item === "string") {
     return (
-      <li
-        className="itemClassName"
-        dangerouslySetInnerHTML={{ __html: item }}
-      />
+      <li className={itemClass} dangerouslySetInnerHTML={{ __html: item }} />
     );
   }
 
-  if ("heading" in item) {
+  if (typeof item === "object" && item.heading) {
     return (
-      <li className={itemClassName}>
-        <div className="flexWrap">
-          <span className="liHeading">{item.heading}</span>
-          <span className="liSeparator">:</span>
+      <li className={itemClass}>
+        <div className="flex-wrap">
+          <span className={`li-heading ${headingClassName || ""}`.trim()}>
+            {item.heading}
+          </span>
+          <span className={`li-separator ${separatorClassName || ""}`.trim()}>
+            :
+          </span>
           <div
-            className="liContent"
-            dangerouslySetInnerHTML={{ __html: item.content }}
+            className={`li-content ${contentClassName || ""}`.trim()}
+            dangerouslySetInnerHTML={{ __html: item.content || "" }}
           />
         </div>
       </li>
@@ -39,26 +54,52 @@ const ListItemComponent = ({
   return null;
 };
 
-interface OrderedListProps {
-  items: ListItem[];
-}
+// Main List component
+export const List: React.FC<ListProps> = ({
+  items,
+  ordered = false,
+  theme = "dark",
+  customTheme,
+  className,
+  itemClassName,
+  headingClassName,
+  contentClassName,
+  separatorClassName,
+}) => {
+  const listClass = `${ordered ? "list-ol" : "list-ul"} ${
+    className || ""
+  }`.trim();
+  const ListTag = ordered ? "ol" : "ul";
 
-export const OrderedListComponent = ({ items }: OrderedListProps) => (
-  <ol className="ol">
-    {items.map((item, index) => (
-      <ListItemComponent key={index} item={item} isOrdered />
-    ))}
-  </ol>
+  return (
+    <ListTag
+      className={listClass}
+      data-theme={theme}
+      style={customTheme as React.CSSProperties}
+    >
+      {items.map((item, index) => (
+        <ListItemComponent
+          key={index}
+          item={item}
+          isOrdered={ordered}
+          itemClassName={itemClassName}
+          headingClassName={headingClassName}
+          contentClassName={contentClassName}
+          separatorClassName={separatorClassName}
+        />
+      ))}
+    </ListTag>
+  );
+};
+
+// Convenience components for backward compatibility
+export const OrderedList: React.FC<Omit<ListProps, "ordered">> = (props) => (
+  <List {...props} ordered />
 );
 
-interface UnorderedListProps {
-  items: ListItem[];
-}
-
-export const UnorderedListComponent = ({ items }: UnorderedListProps) => (
-  <ul className="ul">
-    {items.map((item, index) => (
-      <ListItemComponent key={index} item={item} />
-    ))}
-  </ul>
+export const UnorderedList: React.FC<Omit<ListProps, "ordered">> = (props) => (
+  <List {...props} ordered={false} />
 );
+
+// Export default as List
+export default List;
