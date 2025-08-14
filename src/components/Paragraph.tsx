@@ -1,8 +1,8 @@
 import React from "react";
 import { camelCaseToKebab } from "../utils";
 import "../styles/Paragraph.css";
-
-type ThemeMode = "light" | "dark";
+import { useParagraphTheme } from "../hooks/useParagraphTheme";
+import type { ThemeMode } from "../store/useParagraphThemeStore";
 
 interface ParagraphProps {
   content: string;
@@ -15,27 +15,31 @@ interface ParagraphProps {
 
 export const Paragraph: React.FC<ParagraphProps> = ({
   content,
-  theme = "light",
-  customTheme = {},
+  theme,
+  customTheme,
   className,
   id,
   style: externalStyle,
 }) => {
-  const cssVars = Object.entries(customTheme).reduce<Record<string, string>>(
-    (acc, [k, v]) => {
-      const name = k.startsWith("--") ? k : `--${camelCaseToKebab(k)}`;
-      acc[name] = v;
-      return acc;
-    },
-    {}
-  );
+  const storeTheme = useParagraphTheme();
+
+  const appliedTheme = theme ?? storeTheme.theme;
+  const appliedCustomTheme = customTheme ?? storeTheme.customTheme;
+
+  const cssVars = Object.entries(appliedCustomTheme).reduce<
+    Record<string, string>
+  >((acc, [k, v]) => {
+    const name = k.startsWith("--") ? k : `--${camelCaseToKebab(k)}`;
+    acc[name] = v;
+    return acc;
+  }, {});
 
   const style: React.CSSProperties = { ...cssVars, ...externalStyle };
 
   return (
     <p
       className={`paragraph${className ? ` ${className}` : ""}`}
-      data-theme={theme}
+      data-theme={appliedTheme}
       style={style}
       id={id}
       dangerouslySetInnerHTML={{ __html: content }}

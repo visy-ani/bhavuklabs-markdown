@@ -23,17 +23,7 @@ export const SectionRenderer = ({ section }: SectionRendererProps) => {
     case "h6":
       return <Headings level={6} theme="dark" content={section.content} />;
     case "p":
-      return (
-        <Paragraph
-          theme="dark"
-          content={section.content}
-          customTheme={{
-            "--custom-paragraph-color": "#ffb703",
-            "--paragraph-font-size": "1.1rem",
-            "--paragraph-line-height": "1.8",
-          }}
-        />
-      );
+      return <Paragraph content={section.content} />;
     case "ul":
       return (
         <UnorderedList
