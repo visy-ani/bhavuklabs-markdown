@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { useParagraphThemeStore } from "../store/useParagraphThemeStore";
 import type { ThemeMode } from "../store/useParagraphThemeStore";
 
@@ -7,7 +7,7 @@ interface InitParagraphThemeProps {
   customTheme?: Record<string, string>;
 }
 
-export const useInitParagraphTheme = ({
+const useInitParagraphTheme = ({
   theme = "light",
   customTheme = {},
 }: InitParagraphThemeProps) => {
@@ -21,3 +21,5 @@ export const useInitParagraphTheme = ({
     if (customTheme) setCustomTheme(customTheme);
   }, [theme, customTheme, setTheme, setCustomTheme]);
 };
+
+export default useInitParagraphTheme;
