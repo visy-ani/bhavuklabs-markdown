@@ -1,4 +1,4 @@
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import { useParagraphThemeStore } from "../store/useParagraphThemeStore";
 import type { ThemeMode } from "../store/useParagraphThemeStore";
 
