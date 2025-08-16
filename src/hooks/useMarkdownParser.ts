@@ -1,164 +1,197 @@
 import { useMemo } from "react";
-import type { ContentBlock, ConvertedArticle, ListItem } from "../types";
-import { getLanguageLabel, processInlineMarkdown } from "../utils";
+import type {
+  MarkdownNode,
+  HeadingNode,
+  ListNode,
+  ListItemNode,
+  CodeBlockNode,
+  ParagraphNode,
+} from "../types";
 
-const parseMarkdownToSections = (
-  text: string
-): ConvertedArticle["sections"] => {
-  const lines = text.split("\n").filter((line: string) => line.trim());
-  const sections: ConvertedArticle["sections"] = [];
+export function useMarkdownParser(markdown: string): MarkdownNode[] {
+  return useMemo(() => {
+    const normalizedMarkdown = markdown
+      .replace(/\r\n/g, "\n")
+      .replace(/\r/g, "\n");
+    const lines = normalizedMarkdown.split("\n");
+    const rootNodes: MarkdownNode[] = [];
+    const stack: HeadingNode[] = [];
 
-  let i = 0;
-  while (i < lines.length) {
-    const line = lines[i].trim();
-
-    // Handle H1 headings (#)
-    if (line.startsWith("# ")) {
-      sections.push({
-        type: "h1",
-        content: line.replace("# ", ""),
-        items: [],
-        filename: "",
-        code: "",
-      });
-      i++;
+    function currentParent(): HeadingNode | null {
+      return stack.length ? stack[stack.length - 1] : null;
     }
-    // Handle H2 headings (##)
-    else if (line.startsWith("## ")) {
-      sections.push({
-        type: "h2",
-        content: line.replace("## ", ""),
-        items: [],
-        filename: "",
-        code: "",
-      });
-      i++;
-    }
-    // Handle H3 headings (###)
-    else if (line.startsWith("### ")) {
-      sections.push({
-        type: "h3",
-        content: line.replace("### ", ""),
-        items: [],
-        filename: "",
-        code: "",
-      });
-      i++;
-    }
-    // Handle code blocks
-    else if (line.startsWith("```")) {
-      const language = line.replace("```", "") || "code";
-      let codeContent = "";
-      i++;
 
-      while (i < lines.length && !lines[i].startsWith("```")) {
-        codeContent += (codeContent ? "\n" : "") + lines[i];
+    let i = 0;
+    while (i < lines.length) {
+      const line = lines[i];
+      const trimmedLine = line.trim();
+
+      if (!trimmedLine) {
         i++;
+        continue;
       }
 
-      sections.push({
-        type: "codeBlock",
-        content: "",
-        items: [],
-        filename: getLanguageLabel(language),
-        code: codeContent,
-      });
-      i++; // Skip closing ```
-    }
-    // Handle numbered lists (ordered lists)
-    else if (/^\d+\.\s/.test(line)) {
-      const items: string[] = [];
+      const headingMatch = trimmedLine.match(/^(#{1,6})\s*(.+?)(?:\s*#+\s*)?$/);
+      if (headingMatch) {
+        const level = headingMatch[1].length;
+        const content = headingMatch[2].trim();
+        const node: HeadingNode = {
+          type: "heading",
+          level,
+          content,
+          children: [],
+        };
 
-      while (i < lines.length && /^\d+\.\s/.test(lines[i].trim())) {
-        const itemText = lines[i].trim().replace(/^\d+\.\s/, "");
-        items.push(processInlineMarkdown(itemText));
+        while (stack.length && stack[stack.length - 1].level >= level) {
+          stack.pop();
+        }
+
+        if (stack.length === 0) {
+          rootNodes.push(node);
+        } else {
+          stack[stack.length - 1].children.push(node);
+        }
+        stack.push(node);
         i++;
+        continue;
       }
 
-      sections.push({
-        type: "ol",
-        content: "",
-        items,
-        filename: "",
-        code: "",
-      });
-    }
-    // Handle bullet points (unordered lists)
-    else if (line.startsWith("- ")) {
-      const items: ListItem[] = [];
+      if (/^\s*[-*+]\s+/.test(line)) {
+        const listNode: ListNode = { type: "list", ordered: false, items: [] };
 
-      while (i < lines.length && lines[i].trim().startsWith("- ")) {
-        const itemText = lines[i].trim().replace("- ", "");
-        let content = itemText;
-        i++;
-
-        // Check for continuation lines (indented or just regular paragraphs)
         while (
           i < lines.length &&
-          lines[i].trim() !== "" &&
-          !lines[i].startsWith("- ") &&
-          !lines[i].startsWith("#") &&
-          !lines[i].startsWith("```") &&
-          !/^\d+\.\s/.test(lines[i].trim())
+          lines[i].trim() &&
+          /^\s*[-*+]\s+/.test(lines[i])
         ) {
-          content += " " + lines[i].trim();
+          const itemText = lines[i].replace(/^\s*[-*+]\s+/, "").trim();
+          const itemNode: ListItemNode = {
+            type: "listItem",
+            children: [{ type: "paragraph", content: itemText }],
+          };
+          listNode.items.push(itemNode);
           i++;
         }
 
-        // Check if the item has bold text at the beginning (like **Heading**: Content)
-        const headingMatch = content.match(/^\*\*(.+?)\*\*:\s*(.+)$/);
-
-        if (headingMatch) {
-          items.push({
-            heading: headingMatch[1].trim(),
-            content: processInlineMarkdown(headingMatch[2].trim()),
-          });
+        const parent = currentParent();
+        if (parent) {
+          parent.children.push(listNode);
         } else {
-          items.push(processInlineMarkdown(content));
+          rootNodes.push(listNode);
         }
+        continue;
       }
 
-      sections.push({
-        type: "ul",
-        content: "",
-        items,
-        filename: "",
-        code: "",
-      });
-    }
-    // Handle regular paragraphs
-    else if (line && !line.startsWith("#") && !line.startsWith("```")) {
-      let paragraphContent = line;
-      i++;
+      if (/^\s*\d+\.\s+/.test(line)) {
+        const listNode: ListNode = { type: "list", ordered: true, items: [] };
 
-      // Collect multi-line paragraphs
-      while (
-        i < lines.length &&
-        lines[i].trim() &&
-        !lines[i].startsWith("#") &&
-        !lines[i].startsWith("```") &&
-        !lines[i].startsWith("- ") &&
-        !/^\d+\.\s/.test(lines[i].trim())
-      ) {
-        paragraphContent += " " + lines[i].trim();
+        while (
+          i < lines.length &&
+          lines[i].trim() &&
+          /^\s*\d+\.\s+/.test(lines[i])
+        ) {
+          const itemText = lines[i].replace(/^\s*\d+\.\s+/, "").trim();
+          const itemNode: ListItemNode = {
+            type: "listItem",
+            children: [{ type: "paragraph", content: itemText }],
+          };
+          listNode.items.push(itemNode);
+          i++;
+        }
+
+        const parent = currentParent();
+        if (parent) {
+          parent.children.push(listNode);
+        } else {
+          rootNodes.push(listNode);
+        }
+        continue;
+      }
+
+      if (trimmedLine.startsWith("```")) {
+        const language = trimmedLine.slice(3).trim() || "code";
         i++;
+        const codeLines: string[] = [];
+
+        while (i < lines.length && !lines[i].trim().startsWith("```")) {
+          codeLines.push(lines[i]);
+          i++;
+        }
+
+        if (i < lines.length) {
+          i++;
+        }
+
+        const codeNode: CodeBlockNode = {
+          type: "codeBlock",
+          language,
+          content: codeLines.join("\n"),
+        };
+
+        const parent = currentParent();
+        if (parent) {
+          parent.children.push(codeNode);
+        } else {
+          rootNodes.push(codeNode);
+        }
+        continue;
       }
 
-      sections.push({
-        type: "p",
-        content: processInlineMarkdown(paragraphContent),
-        items: [],
-        filename: "",
-        code: "",
-      });
-    } else {
+      if (
+        trimmedLine &&
+        !trimmedLine.startsWith("#") &&
+        !trimmedLine.match(/^\s*[-*+]\s+/) &&
+        !trimmedLine.match(/^\s*\d+\.\s+/) &&
+        !trimmedLine.startsWith("```")
+      ) {
+        const paragraphLines: string[] = [line];
+        i++;
+
+        while (i < lines.length) {
+          const nextLine = lines[i];
+          const nextTrimmed = nextLine.trim();
+
+          if (!nextTrimmed) {
+            break;
+          }
+
+          if (
+            nextTrimmed.startsWith("#") ||
+            nextTrimmed.match(/^\s*[-*+]\s+/) ||
+            nextTrimmed.match(/^\s*\d+\.\s+/) ||
+            nextTrimmed.startsWith("```")
+          ) {
+            break;
+          }
+
+          paragraphLines.push(nextLine);
+          i++;
+        }
+
+        const content = paragraphLines
+          .map((line) => line.trim())
+          .filter((line) => line.length > 0)
+          .join(" ")
+          .replace(/\s+/g, " ")
+          .trim();
+
+        if (content) {
+          const paraNode: ParagraphNode = { type: "paragraph", content };
+          const parent = currentParent();
+          if (parent) {
+            parent.children.push(paraNode);
+          } else {
+            rootNodes.push(paraNode);
+          }
+        }
+        continue;
+      }
+
       i++;
     }
-  }
 
-  return sections;
-};
-
-export default function useMarkdownParser(markdown: string): ContentBlock[] {
-  return useMemo(() => parseMarkdownToSections(markdown), [markdown]);
+    return rootNodes;
+  }, [markdown]);
 }
+
+export default useMarkdownParser;

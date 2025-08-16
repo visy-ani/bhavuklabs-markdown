@@ -1,6 +1,7 @@
-import type { Language } from "prism-react-renderer";
-import type { ReactNode } from "react";
+export * from "./markdown";
+export * from "./components";
 
+// Legacy types for backward compatibility
 export interface ArticleData {
   subTopicName: string;
   finalRenderableText: string;
@@ -58,35 +59,8 @@ export interface ConvertedArticle {
   }>;
 }
 
-export interface CSSObject {
-  [key: string]: string;
-}
-
-// Component Types
-export interface CodeBlockProps {
-  filename: string;
-  code: string;
-  language?: Language;
-  theme?: "light" | "dark";
-  showLineNumbers?: boolean;
-  showAskAIButton?: boolean;
-  askAIIcon?: ReactNode;
-  askAITooltipText?: string;
-  customTheme?: CSSObject;
-  onAskAI?: (payload: { filename: string; code: string }) => void;
-}
-
-export interface HeadingsProps
-  extends React.HTMLAttributes<HTMLHeadingElement> {
-  level?: 1 | 2 | 3 | 4 | 5 | 6;
-  content: string;
-  theme?: "light" | "dark";
-  customLink?: (opts: { slug: string; content: string }) => React.ReactNode;
-  customStyles?: Record<string, string>;
-  slug?: string;
-}
-
-// List component
+// Re-export component props with new names for clarity
+export type { HeadingProps as HeadingsProps } from "./components";
 export interface ListTheme {
   "--list-text-color"?: string;
   "--list-heading-color"?: string;

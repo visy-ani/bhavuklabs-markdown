@@ -30,7 +30,7 @@ export default [
             terser(),
             postcss(),
         ],
-        external: ['react', 'react-dom'],
+        external: ['react', 'react-dom', 'lucide-react', 'prism-react-renderer'],
     },
     {
         input: "src/index.ts",

@@ -1,14 +1,21 @@
 import React from "react";
-import { SectionRenderer } from "../components/SectionRenderer";
-import type { ContentBlock } from "../types";
+import { MarkdownRenderer } from "../components/MarkdownRenderer";
+import type { MarkdownNode } from "../types";
 
-export function useRenderMarkdown(sections: ContentBlock[]) {
+export function useRenderMarkdown(
+  nodes: MarkdownNode[],
+  theme?: "light" | "dark",
+  customTheme?: Record<string, string>,
+  onAskAI?: (payload: { filename?: string; code: string }) => void
+) {
   return React.useMemo(() => {
-    return sections.map((section, index) => (
-      <SectionRenderer
-        key={section.key ?? `${section.type}-${index}`}
-        section={section}
+    return (
+      <MarkdownRenderer
+        nodes={nodes}
+        theme={theme}
+        customTheme={customTheme}
+        onAskAI={onAskAI}
       />
-    ));
-  }, [sections]);
+    );
+  }, [nodes, theme, customTheme, onAskAI]);
 }

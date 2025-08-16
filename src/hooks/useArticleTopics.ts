@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { ContentBlock } from "../types";
+import type { MarkdownNode, HeadingNode } from "../types";
 import { slugify } from "../utils";
 
 interface Topic {
@@ -8,22 +8,27 @@ interface Topic {
   level: number;
 }
 
-export function useArticleTopics(sections: ContentBlock[]): Topic[] {
-  return useMemo(() => {
-    const topics: Topic[] = [];
-    sections.forEach((section) => {
-      if (
-        section.type === "h1" ||
-        section.type === "h2" ||
-        section.type === "h3"
-      ) {
+function extractHeadings(nodes: MarkdownNode[]): Topic[] {
+  const topics: Topic[] = [];
+
+  function traverse(node: MarkdownNode) {
+    if (node.type === "heading") {
+      const headingNode = node as HeadingNode;
+      if (headingNode.level <= 3) {
         topics.push({
-          id: slugify(section.content),
-          content: section.content,
-          level: +section.type.slice(1),
+          id: slugify(headingNode.content),
+          content: headingNode.content,
+          level: headingNode.level,
         });
       }
-    });
-    return topics;
-  }, [sections]);
+      headingNode.children.forEach(traverse);
+    }
+  }
+
+  nodes.forEach(traverse);
+  return topics;
+}
+
+export function useArticleTopics(nodes: MarkdownNode[]): Topic[] {
+  return useMemo(() => extractHeadings(nodes), [nodes]);
 }
